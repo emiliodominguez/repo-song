@@ -10,11 +10,12 @@ import { encodeWav24 } from "./audio/wav.ts";
 import { composeLofi } from "./compose/lofi.ts";
 import { RepoSongError } from "./errors.ts";
 import { readHistory } from "./history.ts";
-import { CATALOGS, detectLocale, format } from "./i18n/index.ts";
+import { CATALOGS, detectLocale, format, plural } from "./i18n/index.ts";
 import { loadKit } from "./instruments/vcsl.ts";
 import { renderLofi, SAMPLE_RATE } from "./render/lofi.ts";
 
-const msg = CATALOGS[detectLocale()];
+const locale = detectLocale();
+const msg = CATALOGS[locale];
 
 /**
  * Writes a status line to stderr, keeping stdout clean.
@@ -71,7 +72,7 @@ async function main(argv: string[]): Promise<void> {
 	const history = readHistory(dir);
 	const seed = values.seed ?? history.root;
 
-	status(format(msg.repo, { name: history.name, commits: history.commits, seed: seed.slice(0, 12) }));
+	status(format(msg.repo, { name: history.name, commits: plural(locale, msg.commits, history.commits), seed: seed.slice(0, 12) }));
 
 	const missing = missingAssets();
 

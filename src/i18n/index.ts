@@ -20,6 +20,28 @@ export function detectLocale(env: NodeJS.ProcessEnv = process.env): Locale {
 }
 
 /**
+ * A message with plural forms; "one" and "other" cover English and Spanish.
+ */
+export interface PluralForms {
+	one: string;
+	other: string;
+}
+
+/**
+ * Picks the plural form for a count.
+ *
+ * @param locale - Locale.
+ * @param forms - Message per plural category.
+ * @param count - The count.
+ * @returns Formatted text.
+ */
+export function plural(locale: Locale, forms: PluralForms, count: number): string {
+	const category = new Intl.PluralRules(locale).select(count);
+
+	return format(category === "one" ? forms.one : forms.other, { count });
+}
+
+/**
  * Replaces `{name}` placeholders.
  *
  * @param template - Message template.

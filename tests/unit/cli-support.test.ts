@@ -10,7 +10,7 @@ import { encodeWav24, readWav } from "../../src/audio/wav.ts";
 import { stereo } from "../../src/dsp/buffers.ts";
 import { ERROR_CODES, RepoSongError } from "../../src/errors.ts";
 import { readHistory } from "../../src/history.ts";
-import { CATALOGS, detectLocale, format } from "../../src/i18n/index.ts";
+import { CATALOGS, detectLocale, format, plural } from "../../src/i18n/index.ts";
 import { SAMPLED } from "../../src/instruments/catalog.ts";
 
 describe("wav", () => {
@@ -71,6 +71,8 @@ describe("i18n", () => {
 		expect(detectLocale({ LANG: "de_DE.UTF-8" })).toBe("en");
 		expect(detectLocale({})).toBe("en");
 		expect(format("{a} and {b}", { a: 1 })).toBe("1 and {b}");
+		expect(plural("en", CATALOGS.en.commits, 1)).toBe("1 commit");
+		expect(plural("es", CATALOGS.es.commits, 322)).toBe("322 commits");
 	});
 });
 
