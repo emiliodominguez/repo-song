@@ -1,0 +1,5 @@
+dist/
+.cache/
+.plans/
+pnpm-lock.yaml
+src/assets-manifest.json

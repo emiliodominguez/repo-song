@@ -1,0 +1,57 @@
+{
+	"name": "repo-song",
+	"version": "0.1.0",
+	"description": "Every git repo has a song. Turns a repository's history into a lofi track played on real sampled instruments.",
+	"keywords": [
+		"git",
+		"music",
+		"lofi",
+		"generative",
+		"cli",
+		"sonification"
+	],
+	"license": "MIT",
+	"author": "Emilio Dominguez <emilioadominguezb@gmail.com>",
+	"type": "module",
+	"bin": {
+		"repo-song": "./dist/cli.js"
+	},
+	"files": [
+		"dist",
+		"CREDITS.md",
+		"LICENSE"
+	],
+	"packageManager": "pnpm@12.8.1",
+	"engines": {
+		"node": ">=22.18.0"
+	},
+	"scripts": {
+		"prepare": "husky",
+		"song": "node src/cli.ts",
+		"build": "tsc -p tsconfig.build.json",
+		"check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+		"format": "prettier --write .",
+		"format:check": "prettier --check .",
+		"lint": "oxlint --deny-warnings .",
+		"lint:fix": "oxlint --fix .",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest run",
+		"assets:manifest": "node scripts/assets-manifest.ts",
+		"analyze": "node scripts/analyze.ts"
+	},
+	"devDependencies": {
+		"@commitlint/cli": "21.2.3",
+		"@commitlint/config-conventional": "21.2.3",
+		"@stylistic/eslint-plugin": "5.10.0",
+		"@types/node": "26.6.2",
+		"eslint-plugin-jsdoc": "64.5.4",
+		"eslint-plugin-simple-import-sort": "14.0.0",
+		"husky": "9.1.7",
+		"lint-staged": "17.5.1",
+		"oxlint": "1.85.0",
+		"oxlint-tsgolint": "7.0.2002",
+		"prettier": "3.9.8",
+		"typescript": "6.0.3",
+		"vitest": "5.0.1"
+	}
+}

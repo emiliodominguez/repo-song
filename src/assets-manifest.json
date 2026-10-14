@@ -1,0 +1,672 @@
+{
+	"source": {
+		"repo": "sgossner/VCSL",
+		"commit": "c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e"
+	},
+	"files": [
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C0_vl1_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C0_vl1_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C0_vl2_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C0_vl3_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C0_vl3_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C1_vl1_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C1_vl2_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C1_vl2_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C1_vl3_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C1_vl3_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C2_vl1_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C2_vl1_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C2_vl2_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C2_vl2_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C2_vl3_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C2_vl3_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C3_vl1_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C3_vl1_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C3_vl2_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C3_vl2_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C3_vl3_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C3_vl3_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C4_vl1_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C4_vl1_rr2.wav",
+			"size": 67196
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C4_vl2_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C4_vl2_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C4_vl3_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C4_vl3_rr2.wav",
+			"size": 69554
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C5_vl1_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C5_vl1_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C5_vl2_rr1.wav",
+			"size": 76358
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C5_vl2_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C5_vl3_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C5_vl3_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C6_vl2_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C6_vl2_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C6_vl3_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_C6_vl3_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G0_vl1_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G0_vl2_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G0_vl3_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G1_vl1_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G1_vl2_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G1_vl2_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G1_vl3_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G1_vl3_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G2_vl1_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G2_vl1_rr2.wav",
+			"size": 77438
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G2_vl2_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G2_vl2_rr2.wav",
+			"size": 70670
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G2_vl3_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G2_vl3_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G3_vl1_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G3_vl1_rr2.wav",
+			"size": 116480
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G3_vl2_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G3_vl2_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G3_vl3_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G3_vl3_rr2.wav",
+			"size": 72596
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G4_vl1_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G4_vl1_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G4_vl2_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G4_vl2_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G4_vl3_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G4_vl3_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G5_vl1_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G5_vl1_rr2.wav",
+			"size": 83888
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G5_vl2_rr1.wav",
+			"size": 82652
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G5_vl2_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G5_vl3_rr1.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G5_vl3_rr2.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Releases/Upright1_Rel_G5_vl3_rr3.wav",
+			"size": 92654
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C0_vl1_rr1.wav",
+			"size": 2630054
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C0_vl1_rr2.wav",
+			"size": 4212128
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C0_vl2_rr1.wav",
+			"size": 6033782
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C0_vl3_rr1.wav",
+			"size": 5629760
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C0_vl3_rr2.wav",
+			"size": 7372118
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C1_vl1_rr1.wav",
+			"size": 4165730
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C1_vl2_rr1.wav",
+			"size": 4332530
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C1_vl2_rr2.wav",
+			"size": 5830364
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C1_vl3_rr1.wav",
+			"size": 5799734
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C1_vl3_rr2.wav",
+			"size": 6695132
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C2_vl1_rr1.wav",
+			"size": 2261606
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C2_vl1_rr2.wav",
+			"size": 3624380
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C2_vl2_rr1.wav",
+			"size": 3709418
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C2_vl2_rr2.wav",
+			"size": 5971184
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C2_vl3_rr1.wav",
+			"size": 6100652
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C2_vl3_rr2.wav",
+			"size": 6412616
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C3_vl1_rr1.wav",
+			"size": 3458012
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C3_vl1_rr2.wav",
+			"size": 2890910
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C3_vl2_rr1.wav",
+			"size": 4257218
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C3_vl2_rr2.wav",
+			"size": 4383386
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C3_vl3_rr1.wav",
+			"size": 4752374
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C3_vl3_rr2.wav",
+			"size": 4519958
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C4_vl1_rr1.wav",
+			"size": 2536052
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C4_vl1_rr2.wav",
+			"size": 2722208
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C4_vl2_rr1.wav",
+			"size": 2964236
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C4_vl2_rr2.wav",
+			"size": 3588308
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C4_vl3_rr1.wav",
+			"size": 3578966
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C4_vl3_rr2.wav",
+			"size": 3739250
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C5_vl1_rr1.wav",
+			"size": 724508
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C5_vl1_rr2.wav",
+			"size": 1120100
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C5_vl2_rr1.wav",
+			"size": 1177340
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C5_vl2_rr2.wav",
+			"size": 1246142
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C5_vl3_rr1.wav",
+			"size": 1330352
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C5_vl3_rr2.wav",
+			"size": 1369148
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C6_vl2_rr1.wav",
+			"size": 503348
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C6_vl2_rr2.wav",
+			"size": 491570
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C6_vl3_rr1.wav",
+			"size": 630902
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_C6_vl3_rr2.wav",
+			"size": 575042
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G0_vl1_rr1.wav",
+			"size": 3053120
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G0_vl2_rr1.wav",
+			"size": 4932824
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G0_vl3_rr1.wav",
+			"size": 6536642
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G1_vl1_rr1.wav",
+			"size": 4351628
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G1_vl2_rr1.wav",
+			"size": 4690370
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G1_vl2_rr2.wav",
+			"size": 6785066
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G1_vl3_rr1.wav",
+			"size": 6390584
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G1_vl3_rr2.wav",
+			"size": 7293374
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G2_vl1_rr1.wav",
+			"size": 2953694
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G2_vl1_rr2.wav",
+			"size": 5056370
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G2_vl2_rr1.wav",
+			"size": 4884824
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G2_vl2_rr2.wav",
+			"size": 5630030
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G2_vl3_rr1.wav",
+			"size": 5882480
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G2_vl3_rr2.wav",
+			"size": 6098498
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G3_vl1_rr1.wav",
+			"size": 3339848
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G3_vl1_rr2.wav",
+			"size": 2442050
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G3_vl2_rr1.wav",
+			"size": 3013760
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G3_vl2_rr2.wav",
+			"size": 3391712
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G3_vl3_rr1.wav",
+			"size": 3523184
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G3_vl3_rr2.wav",
+			"size": 3782144
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G4_vl1_rr1.wav",
+			"size": 1130282
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G4_vl1_rr2.wav",
+			"size": 1044356
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G4_vl2_rr1.wav",
+			"size": 1689146
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G4_vl2_rr2.wav",
+			"size": 1643846
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G4_vl3_rr1.wav",
+			"size": 1639496
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G4_vl3_rr2.wav",
+			"size": 1889924
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G5_vl1_rr1.wav",
+			"size": 325124
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G5_vl1_rr2.wav",
+			"size": 811244
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G5_vl2_rr1.wav",
+			"size": 1014530
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G5_vl2_rr2.wav",
+			"size": 895538
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G5_vl3_rr1.wav",
+			"size": 907220
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G5_vl3_rr2.wav",
+			"size": 371858
+		},
+		{
+			"path": "Chordophones/Zithers/Upright Piano, Yamaha/Sustains/Upright1_Sus_G5_vl3_rr3.wav",
+			"size": 872636
+		},
+		{
+			"path": "Idiophones/Struck Idiophones/Hi-Hat Cymbal/HiHat_HitC_v1_rr1_Mid.wav",
+			"size": 210708
+		},
+		{
+			"path": "Idiophones/Struck Idiophones/Hi-Hat Cymbal/HiHat_HitC_v1_rr2_Mid.wav",
+			"size": 234640
+		},
+		{
+			"path": "Idiophones/Struck Idiophones/Hi-Hat Cymbal/HiHat_HitC_v2_rr1_Mid.wav",
+			"size": 247272
+		},
+		{
+			"path": "Idiophones/Struck Idiophones/Hi-Hat Cymbal/HiHat_HitC_v2_rr2_Mid.wav",
+			"size": 250072
+		},
+		{
+			"path": "Idiophones/Struck Idiophones/Hi-Hat Cymbal/HiHat_HitC_v3_rr1_Mid.wav",
+			"size": 218792
+		},
+		{
+			"path": "Idiophones/Struck Idiophones/Hi-Hat Cymbal/HiHat_HitC_v3_rr2_Mid.wav",
+			"size": 279024
+		},
+		{
+			"path": "Idiophones/Struck Idiophones/Hi-Hat Cymbal/HiHat_HitC_v4_rr1_Mid.wav",
+			"size": 266280
+		},
+		{
+			"path": "Idiophones/Struck Idiophones/Hi-Hat Cymbal/HiHat_HitC_v4_rr2_Mid.wav",
+			"size": 237564
+		},
+		{
+			"path": "Idiophones/Struck Idiophones/Hi-Hat Cymbal/HiHat_HitO_rr1_Mid.wav",
+			"size": 1026612
+		},
+		{
+			"path": "Idiophones/Struck Idiophones/Hi-Hat Cymbal/HiHat_HitO_rr2_Mid.wav",
+			"size": 1086072
+		},
+		{
+			"path": "Idiophones/Struck Idiophones/Shaker, Small/Mid_Shaker_Slap_rr1.wav",
+			"size": 120316
+		},
+		{
+			"path": "Idiophones/Struck Idiophones/Shaker, Small/Mid_Shaker_Slap_rr2.wav",
+			"size": 124008
+		},
+		{
+			"path": "Membranophones/Struck Membranophones/Snare Drum, Modern 1/Snare2_HitSN_v3_rr1_Mid.wav",
+			"size": 305304
+		},
+		{
+			"path": "Membranophones/Struck Membranophones/Snare Drum, Modern 1/Snare2_HitSN_v3_rr2_Mid.wav",
+			"size": 231264
+		},
+		{
+			"path": "Membranophones/Struck Membranophones/Snare Drum, Modern 1/Snare2_HitSN_v5_rr1_Mid.wav",
+			"size": 240496
+		},
+		{
+			"path": "Membranophones/Struck Membranophones/Snare Drum, Modern 1/Snare2_HitSN_v5_rr2_Mid.wav",
+			"size": 255456
+		},
+		{
+			"path": "Membranophones/Struck Membranophones/Snare Drum, Modern 1/Snare2_HitSN_v6_rr1_Mid.wav",
+			"size": 240660
+		},
+		{
+			"path": "Membranophones/Struck Membranophones/Snare Drum, Modern 1/Snare2_HitSN_v6_rr2_Mid.wav",
+			"size": 241176
+		},
+		{
+			"path": "Membranophones/Struck Membranophones/Snare Drum, Modern 1/Snare2_HitSN_v7_rr1_Mid.wav",
+			"size": 271480
+		},
+		{
+			"path": "Membranophones/Struck Membranophones/Snare Drum, Modern 1/Snare2_HitSN_v7_rr2_Mid.wav",
+			"size": 258420
+		},
+		{
+			"path": "Membranophones/Struck Membranophones/Snare Drum, Modern 1/Snare2_HitSN_v9_rr1_Mid.wav",
+			"size": 294868
+		},
+		{
+			"path": "Membranophones/Struck Membranophones/Snare Drum, Modern 1/Snare2_HitSN_v9_rr2_Mid.wav",
+			"size": 272616
+		},
+		{
+			"path": "Membranophones/Struck Membranophones/Snare Drum, Modern 1/Snare2_stick_v1_rr1_Mid.wav",
+			"size": 132812
+		},
+		{
+			"path": "Membranophones/Struck Membranophones/Snare Drum, Modern 1/Snare2_stick_v1_rr2_Mid.wav",
+			"size": 150356
+		}
+	]
+}
