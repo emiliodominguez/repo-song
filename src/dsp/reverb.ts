@@ -3,6 +3,31 @@
 import type { Rng } from "../compose/rng.ts";
 import type { Stereo } from "../types.ts";
 
+const twiddles = new Map<number, { cos: Float64Array; sin: Float64Array }>();
+
+/**
+ * Cosine/sine table for an FFT size, cached (exact values, no recurrence drift).
+ *
+ * @param n - FFT size.
+ * @returns Tables of length n/2.
+ */
+function twiddleTable(n: number): { cos: Float64Array; sin: Float64Array } {
+	let t = twiddles.get(n);
+
+	if (!t) {
+		t = { cos: new Float64Array(n / 2), sin: new Float64Array(n / 2) };
+
+		for (let k = 0; k < n / 2; k++) {
+			t.cos[k] = Math.cos((2 * Math.PI * k) / n);
+			t.sin[k] = Math.sin((2 * Math.PI * k) / n);
+		}
+
+		twiddles.set(n, t);
+	}
+
+	return t;
+}
+
 /**
  * In-place iterative radix-2 complex FFT.
  *
@@ -12,6 +37,8 @@ import type { Stereo } from "../types.ts";
  */
 export function fft(re: Float64Array, im: Float64Array, inverse: boolean): void {
 	const n = re.length;
+	const { cos, sin } = twiddleTable(n);
+	const sign = inverse ? 1 : -1;
 
 	for (let i = 1, j = 0; i < n; i++) {
 		let bit = n >> 1;
@@ -23,31 +50,33 @@ export function fft(re: Float64Array, im: Float64Array, inverse: boolean): void 
 		j ^= bit;
 
 		if (i < j) {
-			[re[i], re[j]] = [re[j], re[i]];
-			[im[i], im[j]] = [im[j], im[i]];
+			const tr = re[i];
+			const ti = im[i];
+
+			re[i] = re[j];
+			im[i] = im[j];
+			re[j] = tr;
+			im[j] = ti;
 		}
 	}
 
 	for (let len = 2; len <= n; len <<= 1) {
-		const ang = ((inverse ? 2 : -2) * Math.PI) / len;
-		const wr = Math.cos(ang);
-		const wi = Math.sin(ang);
+		const half = len >> 1;
+		const step = n / len;
 
 		for (let i = 0; i < n; i += len) {
-			let cr = 1,
-				ci = 0;
-
-			for (let k = 0; k < len / 2; k++) {
+			for (let k = 0; k < half; k++) {
+				const wr = cos[k * step];
+				const wi = sign * sin[k * step];
 				const a = i + k;
-				const b = a + len / 2;
-				const tr = re[b] * cr - im[b] * ci;
-				const ti = re[b] * ci + im[b] * cr;
+				const b = a + half;
+				const tr = re[b] * wr - im[b] * wi;
+				const ti = re[b] * wi + im[b] * wr;
 
 				re[b] = re[a] - tr;
 				im[b] = im[a] - ti;
 				re[a] += tr;
 				im[a] += ti;
-				[cr, ci] = [cr * wr - ci * wi, cr * wi + ci * wr];
 			}
 		}
 	}
@@ -115,7 +144,8 @@ export function roomIR(sampleRate: number, rng: Rng, opts: RoomOptions = {}): St
 }
 
 /**
- * Convolves a stereo signal with a stereo IR (channel by channel) and returns only the wet signal.
+ * Convolves a stereo signal with a stereo IR (left with left, right with right) by overlap-add block FFTs, and
+ * returns only the wet signal. Left and right ride one complex FFT (left real, right imaginary), halving the work.
  *
  * @param dry - Input.
  * @param ir - Impulse response.
@@ -131,36 +161,65 @@ export function convolve(dry: Stereo, ir: Stereo): Stereo {
 		size <<= 1;
 	}
 
+	// the two IR spectra, unpacked from one transform
+	const hr = new Float64Array(size);
+	const hi = new Float64Array(size);
+
+	hr.set(ir[0]);
+	hi.set(ir[1]);
+	fft(hr, hi, false);
+
+	const hlr = new Float64Array(size);
+	const hli = new Float64Array(size);
+	const hrr = new Float64Array(size);
+	const hri = new Float64Array(size);
+
+	for (let k = 0; k < size; k++) {
+		const m = (size - k) % size;
+
+		// X_left = (Z[k] + conj Z[N-k]) / 2, X_right = (Z[k] - conj Z[N-k]) / 2i
+		hlr[k] = (hr[k] + hr[m]) / 2;
+		hli[k] = (hi[k] - hi[m]) / 2;
+		hrr[k] = (hi[k] + hi[m]) / 2;
+		hri[k] = -(hr[k] - hr[m]) / 2;
+	}
+
 	const wet: Stereo = [new Float32Array(len), new Float32Array(len)];
+	const zr = new Float64Array(size);
+	const zi = new Float64Array(size);
+	const yr = new Float64Array(size);
+	const yi = new Float64Array(size);
 
-	for (let c = 0; c < 2; c++) {
-		const hr = new Float64Array(size);
-		const hi = new Float64Array(size);
-		const src = dry[c] as Float32Array;
-		const out = wet[c] as Float32Array;
+	for (let s = 0; s < len; s += block) {
+		const n = Math.min(block, len - s);
 
-		hr.set(ir[c]);
-		fft(hr, hi, false);
+		zr.fill(0);
+		zi.fill(0);
+		zr.set(dry[0].subarray(s, s + n));
+		zi.set(dry[1].subarray(s, s + n));
+		fft(zr, zi, false);
 
-		for (let s = 0; s < len; s += block) {
-			const xr = new Float64Array(size);
-			const xi = new Float64Array(size);
+		for (let k = 0; k < size; k++) {
+			const m = (size - k) % size;
+			const lr = (zr[k] + zr[m]) / 2;
+			const li = (zi[k] - zi[m]) / 2;
+			const rr = (zi[k] + zi[m]) / 2;
+			const ri = -(zr[k] - zr[m]) / 2;
+			// Y_left and Y_right, then repack as Y_left + i·Y_right
+			const ylr = lr * hlr[k] - li * hli[k];
+			const yli = lr * hli[k] + li * hlr[k];
+			const yrr = rr * hrr[k] - ri * hri[k];
+			const yri = rr * hri[k] + ri * hrr[k];
 
-			xr.set(src.subarray(s, Math.min(len, s + block)));
-			fft(xr, xi, false);
+			yr[k] = ylr - yri;
+			yi[k] = yli + yrr;
+		}
 
-			for (let k = 0; k < size; k++) {
-				const r = xr[k] * hr[k] - xi[k] * hi[k];
+		fft(yr, yi, true);
 
-				xi[k] = xr[k] * hi[k] + xi[k] * hr[k];
-				xr[k] = r;
-			}
-
-			fft(xr, xi, true);
-
-			for (let k = 0; k < size && s + k < len; k++) {
-				out[s + k] += xr[k];
-			}
+		for (let k = 0; k < size && s + k < len; k++) {
+			wet[0][s + k] += yr[k];
+			wet[1][s + k] += yi[k];
 		}
 	}
 

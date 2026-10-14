@@ -5,7 +5,7 @@ import { stereo } from "../../src/dsp/buffers.ts";
 import { compress, gatedRmsDb, limit } from "../../src/dsp/dynamics.ts";
 import { biquad } from "../../src/dsp/filters.ts";
 import { convolve } from "../../src/dsp/reverb.ts";
-import { LOFI_TONE, matchTone, toneBands } from "../../src/dsp/tone.ts";
+import { bandTarget, matchTone, toneBands } from "../../src/dsp/tone.ts";
 import type { Stereo } from "../../src/types.ts";
 
 const SR = 48_000;
@@ -75,7 +75,7 @@ describe("dynamics", () => {
 });
 
 describe("tone", () => {
-	it("matching EQ moves a mix toward the reference curve", () => {
+	it("matching EQ brings white noise inside the reference range", () => {
 		const rng = makeRng("noise");
 		const buf = stereo(SR * 4);
 
@@ -86,39 +86,51 @@ describe("tone", () => {
 		}
 
 		/**
-		 * Mean absolute distance from the target curve.
+		 * Largest distance (dB) of any band outside the reference range.
 		 *
 		 * @returns dB.
 		 */
-		function distance(): number {
-			const bands = toneBands(buf, SR);
-
-			return (
-				bands.reduce(function sum(s, v, i) {
-					return s + Math.abs(v - LOFI_TONE[i]);
-				}, 0) / bands.length
-			);
+		function outside(): number {
+			return Math.max(...toneBands(buf, SR).map((v, i) => Math.abs(v - bandTarget(v, i, 0))));
 		}
 
-		const before = distance();
+		const before = outside();
 
-		matchTone(buf, SR, LOFI_TONE, { strength: 0.75, maxDb: 7, passes: 3 });
-		expect(distance()).toBeLessThan(before * 0.6);
+		matchTone(buf, SR, { passes: 6, maxDb: 12 });
+		expect(before).toBeGreaterThan(10);
+		expect(outside()).toBeLessThan(before * 0.35);
+	});
+
+	it("leaves a mix that is already inside the range alone", () => {
+		expect(bandTarget(-8, 3)).toBe(-8);
+		expect(bandTarget(-2, 3)).toBeLessThan(-5);
 	});
 });
 
 describe("reverb", () => {
-	it("convolving with a unit impulse returns the input", () => {
-		const dry = sine(440, 0.5);
-		const ir = stereo(64);
+	it("matches direct convolution on both channels", () => {
+		const rng = makeRng("conv");
+		const dry: Stereo = [new Float32Array(70_000), new Float32Array(70_000)];
+		const ir: Stereo = [new Float32Array(300), new Float32Array(300)];
 
-		ir[0][0] = 1;
-		ir[1][0] = 1;
+		for (const ch of [...dry, ...ir]) {
+			for (let i = 0; i < ch.length; i++) {
+				ch[i] = rng.float() * 2 - 1;
+			}
+		}
 
 		const wet = convolve(dry, ir);
 
-		for (let i = 0; i < dry[0].length; i += 997) {
-			expect(wet[0][i]).toBeCloseTo(dry[0][i], 5);
+		for (const c of [0, 1] as const) {
+			for (const n of [0, 299, 65_535, 65_536, 65_800, 69_999]) {
+				let direct = 0;
+
+				for (let k = 0; k < ir[c].length && k <= n; k++) {
+					direct += ir[c][k] * dry[c][n - k];
+				}
+
+				expect(wet[c][n]).toBeCloseTo(direct, 3);
+			}
 		}
 	});
 });

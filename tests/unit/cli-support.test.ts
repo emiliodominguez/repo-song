@@ -96,7 +96,14 @@ describe("history", () => {
 		const root = git("rev-parse", "HEAD");
 
 		git("commit", "--allow-empty", "-q", "-m", "second");
-		expect(readHistory(dir)).toMatchObject({ root, commits: 2 });
+		git("tag", "v1");
+
+		const read = readHistory(dir);
+
+		expect(read.root).toBe(root);
+		expect(read.commits).toHaveLength(2);
+		expect(read.commits[0]?.author).toBe("t@t");
+		expect(read.tags.map((t) => t.name)).toEqual(["v1"]);
 
 		const empty = mkdtempSync(join(tmpdir(), "repo-song-none-"));
 

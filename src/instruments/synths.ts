@@ -29,7 +29,7 @@ export interface RhodesOptions {
 
 /**
  * Rhodes-style electric piano: a 2-operator FM tine whose index follows velocity, a fast inharmonic "ding",
- * a two-stage decay, and an asymmetric pickup nonlinearity that adds bark when played hard.
+ * a soft hammer thump, a two-stage decay, and an asymmetric pickup nonlinearity that adds bark when played hard.
  *
  * @param out - Output buffer.
  * @param sr - Sample rate.
@@ -47,15 +47,43 @@ export function rhodes(out: Stereo, sr: number, n: Note, opts: RhodesOptions = {
 	const ding = Math.min(1, 9000 / (f * 7.1));
 	const drive = 1 + 2.2 * v * v;
 	const asym = 0.35;
-	const norm = 1 / (Math.tanh(drive + asym) - Math.tanh(asym));
-	const gl = gain * Math.sqrt((1 - pan) / 2) * (0.25 + 0.75 * v ** 1.4);
-	const gr = gain * Math.sqrt((1 + pan) / 2) * (0.25 + 0.75 * v ** 1.4);
+	const bias = Math.tanh(asym);
+	const norm = 1 / (Math.tanh(drive + asym) - bias);
+	const level = 0.25 + 0.75 * v ** 1.4;
+	const gl = gain * Math.sqrt((1 - pan) / 2) * level;
+	const gr = gain * Math.sqrt((1 + pan) / 2) * level;
 	const [l, r] = out;
-	let rel = 1;
+	// decays as per-sample multipliers
+	const m1 = Math.exp(-1 / (0.45 * sr));
+	const m2 = Math.exp(-1 / (tauLong * sr));
+	const mi = Math.exp(-1 / (0.28 * sr));
+	const md = Math.exp(-1 / (0.035 * sr));
+	const mt = Math.exp(-1 / (0.012 * sr));
+	// rotating oscillators for the modulator and the ding partial
+	const wf = (TAU * f) / sr;
+	const cwf = Math.cos(wf);
+	const swf = Math.sin(wf);
+	const wd = (TAU * f * 7.1) / sr;
+	const cwd = Math.cos(wd);
+	const swd = Math.sin(wd);
+	const indexDepth = 0.25 + 1.6 * v * v;
+	const attack = 1 / (0.0015 * sr);
+
+	let ms = 0,
+		mc = 1,
+		ds = 0,
+		dc = 1,
+		phase = 0,
+		e1 = 1,
+		e2 = 1,
+		ie = 1,
+		de = 1,
+		te = 1,
+		rel = 1,
+		noise = (start * 2654435761) >>> 0 || 1,
+		thump = 0;
 
 	for (let i = start, k = 0; i < l.length; i++, k++) {
-		const t = k / sr;
-
 		if (i >= off) {
 			rel *= release;
 
@@ -64,18 +92,46 @@ export function rhodes(out: Stereo, sr: number, n: Note, opts: RhodesOptions = {
 			}
 		}
 
-		const env = (0.55 * Math.exp(-t / 0.45) + 0.45 * Math.exp(-t / tauLong)) * Math.min(1, t / 0.0015) * rel;
-		const index = (0.25 + 1.6 * v * v) * Math.exp(-t / 0.28) + 0.18;
-		const mod = Math.sin(TAU * f * t) * index;
-		let x = Math.sin(TAU * f * t + mod);
+		let x = Math.sin(phase + ms * (indexDepth * ie + 0.18));
 
-		x += 0.22 * v * ding * Math.exp(-t / 0.035) * Math.sin(TAU * f * 7.1 * t);
+		if (de > 1e-4) {
+			x += 0.22 * v * ding * de * ds;
+		}
 
-		const y = (Math.tanh(drive * x * 0.6 + asym) - Math.tanh(asym)) * norm;
-		const s = y * env;
+		const y = (Math.tanh(drive * x * 0.6 + asym) - bias) * norm;
+		let s = y * (0.55 * e1 + 0.45 * e2) * Math.min(1, k * attack) * rel;
+
+		// the felt hammer hitting the tine: a short burst of dark noise
+		if (te > 1e-3) {
+			noise ^= noise << 13;
+			noise ^= noise >>> 17;
+			noise ^= noise << 5;
+			thump += 0.08 * ((noise >>> 0) / 2147483648 - 1 - thump);
+			s += thump * te * 0.9 * v;
+			te *= mt;
+		}
 
 		l[i] += s * gl;
 		r[i] += s * gr;
+		phase += wf;
+
+		if (phase > TAU) {
+			phase -= TAU;
+		}
+
+		const ms2 = ms * cwf + mc * swf;
+
+		mc = mc * cwf - ms * swf;
+		ms = ms2;
+
+		const ds2 = ds * cwd + dc * swd;
+
+		dc = dc * cwd - ds * swd;
+		ds = ds2;
+		e1 *= m1;
+		e2 *= m2;
+		ie *= mi;
+		de *= md;
 	}
 }
 
@@ -106,14 +162,16 @@ export function bass(out: Stereo, sr: number, n: Note, opts: BassOptions = {}): 
 	const start = Math.round(n.start * sr);
 	const off = Math.round(n.end * sr);
 	const pluck = 0.2;
-	const parts: { w: number; amp: number; env: number; mul: number }[] = [];
+	const parts: { amp: number; env: number; mul: number; s: number; c: number; cw: number; sw: number }[] = [];
 
 	for (let k = 1; k <= 24 && f * k < 5000; k++) {
 		const amp = (Math.abs(Math.sin(Math.PI * k * pluck)) / k ** (1.35 - 0.4 * brightness)) * (k === 1 ? 1.4 : 1);
 		const fk = f * k * Math.sqrt(1 + 0.00012 * k * k);
 		const decay = (1 + 0.55 * (k - 1) * (1.2 - brightness)) / 1.8;
 
-		parts.push({ w: TAU * fk, amp, env: 1, mul: Math.exp(-decay / sr) });
+		const w = (TAU * fk) / sr;
+
+		parts.push({ amp, env: 1, mul: Math.exp(-decay / sr), s: 0, c: 1, cw: Math.cos(w), sw: Math.sin(w) });
 	}
 
 	const total = parts.reduce(function sum(s, p) {
@@ -140,12 +198,21 @@ export function bass(out: Stereo, sr: number, n: Note, opts: BassOptions = {}): 
 		let s = 0;
 
 		for (const p of parts) {
-			s += p.amp * p.env * Math.sin(p.w * t);
+			s += p.amp * p.env * p.s;
 			p.env *= p.mul;
+
+			const next = p.s * p.cw + p.c * p.sw;
+
+			p.c = p.c * p.cw - p.s * p.sw;
+			p.s = next;
 		}
 
 		s *= Math.min(1, t / 0.004) * rel * g;
-		s += 0.25 * v * g * total * Math.exp(-t / 0.008) * Math.sin(TAU * 90 * t);
+
+		if (t < 0.06) {
+			s += 0.25 * v * g * total * Math.exp(-t / 0.008) * Math.sin(TAU * 90 * t);
+		}
+
 		l[i] += s;
 		r[i] += s;
 	}

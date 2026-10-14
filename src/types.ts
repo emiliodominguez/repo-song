@@ -1,3 +1,6 @@
+import type { Family } from "./compose/harmony.ts";
+import type { Section } from "./compose/story.ts";
+
 /**
  * A stereo buffer: [left, right].
  */
@@ -19,13 +22,28 @@ export interface Note {
 export type Role = "pad" | "keys" | "lead" | "bass" | "drums";
 
 /**
- * A composed song: notes per role plus the musical facts a listener might want to see.
+ * A section placed in time.
+ */
+export interface TimedSection extends Section {
+	startSec: number;
+	endSec: number;
+}
+
+/**
+ * A composed song: notes per part, its form, and the musical facts a listener might want to see.
  */
 export interface Song {
 	seed: string;
+	/**
+	 * Length of the music up to the end of the last bar (the final chord rings on past it).
+	 */
 	seconds: number;
 	bpm: number;
+	/**
+	 * Tonic name, e.g. "F#".
+	 */
 	key: string;
-	scale: string;
+	mode: Family;
+	sections: TimedSection[];
 	parts: Record<Role, Note[]>;
 }

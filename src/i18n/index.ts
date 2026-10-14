@@ -33,12 +33,13 @@ export interface PluralForms {
  * @param locale - Locale.
  * @param forms - Message per plural category.
  * @param count - The count.
+ * @param params - Extra placeholder values.
  * @returns Formatted text.
  */
-export function plural(locale: Locale, forms: PluralForms, count: number): string {
+export function plural(locale: Locale, forms: PluralForms, count: number, params: Record<string, string | number> = {}): string {
 	const category = new Intl.PluralRules(locale).select(count);
 
-	return format(category === "one" ? forms.one : forms.other, { count });
+	return format(category === "one" ? forms.one : forms.other, { count, ...params });
 }
 
 /**

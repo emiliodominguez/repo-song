@@ -67,3 +67,30 @@ export function fade(buf: Stereo, sampleRate: number, inSec: number, outSec: num
 		}
 	}
 }
+
+/**
+ * Applies a gain automation curve (in dB), evaluated every 64 samples and interpolated in between.
+ *
+ * @param buf - Buffer, modified in place.
+ * @param sampleRate - Sample rate in Hz.
+ * @param gainAt - Gain in dB at a time in seconds.
+ */
+export function automateGain(buf: Stereo, sampleRate: number, gainAt: (t: number) => number): void {
+	const block = 64;
+	const len = buf[0].length;
+	let g0 = 10 ** (gainAt(0) / 20);
+
+	for (let s = 0; s < len; s += block) {
+		const g1 = 10 ** (gainAt((s + block) / sampleRate) / 20);
+		const end = Math.min(len, s + block);
+
+		for (let i = s; i < end; i++) {
+			const g = g0 + ((g1 - g0) * (i - s)) / block;
+
+			buf[0][i] *= g;
+			buf[1][i] *= g;
+		}
+
+		g0 = g1;
+	}
+}

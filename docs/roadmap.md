@@ -2,42 +2,30 @@
 
 Ordered by what most helps the project spread: people sharing what their repo sounds like.
 
-## 1. Let the history write the song
+## Done
 
-Today the history only provides a seed, so a 10-year monorepo and a weekend script differ only by chance. Make the shape of the song come from the shape of the history:
+- History writes the form: phrases per slice of the timeline, energy from activity, breakdowns at lulls, milestone releases resolving home, new contributors adding a harmony line, liner notes.
+- Composition: extended-chord progressions, voice-led rootless voicings, anticipations, kick-locked bass with approaches, swung groove with ghost notes and stops, motif-based melody with call and response, no half-step rubs.
+- Arrangement dynamics through the mix (filter and level automation), matching EQ against the range of four reference records.
 
-- commit density over time → sections and an energy curve (busy periods build, quiet stretches break down);
-- contributors → instruments or voices entering as people join;
-- big diffs → drops or fills; release tags → resolutions to the tonic;
-- language mix or repo age → mode, tempo, swing.
+## 1. First-run download size
 
-Keep the root-commit seed for everything that should stay stable, so a song evolves with its repo but stays recognisable. This needs a decision on how much a song may change as a repo grows.
+255 MB of 24-bit WAV is too heavy for `npx`. Build a compact pack: trim tails, keep only what the renderer plays, encode losslessly (FLAC through a small WASM decoder) or as high-bitrate Opus, host it as a release asset. Target: under 40 MB. Needs a decision on where the pack is hosted (GitHub releases on this repo is the obvious choice).
 
-## 2. Composition quality
+## 2. Shareable output
 
-- Voicings: rootless 9ths/11ths, drop-2, voice leading between chords instead of block triads.
-- Drums: ghost notes, hat velocity accents, fills at phrase ends, occasional side-stick backbeat.
-- Bass: approach notes, rhythmic variation tied to the kick.
-- Arrangement: intro, A/B sections, a breakdown, an outro, instead of one texture for the whole track.
-
-## 3. Shareable output
-
-- MP3/AAC output (pure-JS encoder) next to WAV.
-- A short video (waveform or cover art from the repo) for social posts.
+- MP3/AAC next to WAV (a pure-JS encoder; check the licence before adding one).
+- A short video (waveform plus the liner notes) for social posts.
 - A README badge ("▶ Listen to this repo") linking to a hosted render. This is the loop that spreads it.
-- A gallery of famous repos rendered ahead of launch.
+- A gallery of famous repos rendered ahead of launch (React, Express and friends already render well from bare clones).
 
-## 4. First-run download size
+## 3. Publish
 
-255 MB of 24-bit WAV is too heavy for `npx`. Build a compact pack: trim tails and silence, keep only the layers the renderer uses, encode losslessly (FLAC via a WASM decoder) or as high-bitrate Opus, host it as a release asset. Target: under 40 MB.
-
-## 5. Publish
-
-npm publish, provenance, a release workflow, `npx repo-song` in the README for real.
+npm publish with provenance, a release workflow, `npx repo-song` in the README for real.
 
 ## Sound backlog
 
-- Re-measure `LOFI_TONE` with the same band method `matchTone` uses (see sound.md, known limits). Changes every song; do it together with other deliberate sound changes.
-- More references for the target curve (two is thin).
-- A sampled Rhodes if a CC0/CC-BY one turns up (jRhodes3d is CC BY-NC and so excluded).
-- Other genres (ambient, jazz, house) on the same engine. music-radio has profiles to start from.
+- More reference records for the tonal range.
+- A sampled Rhodes if a CC0/CC-BY one turns up.
+- More progressions and drum patterns; occasional key change for long histories.
+- Other genres (jazz, ambient, house) on the same engine.

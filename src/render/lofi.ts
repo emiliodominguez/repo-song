@@ -2,12 +2,12 @@
 // The order of RNG draws here is part of the sound: changing it changes every song.
 
 import { makeRng, type Rng } from "../compose/rng.ts";
-import { addInto, applyGain, fade, stereo } from "../dsp/buffers.ts";
+import { addInto, applyGain, automateGain, fade, stereo } from "../dsp/buffers.ts";
 import { crunch, saturate, tapeWobble, tremolo, vinyl } from "../dsp/character.ts";
 import { compress, gatedRmsDb, limit, sidechain } from "../dsp/dynamics.ts";
-import { biquad } from "../dsp/filters.ts";
+import { biquad, sweepLowpass } from "../dsp/filters.ts";
 import { convolve, roomIR } from "../dsp/reverb.ts";
-import { LOFI_TONE, matchTone } from "../dsp/tone.ts";
+import { matchTone } from "../dsp/tone.ts";
 import { playNote, type RoundRobin } from "../instruments/sampler.ts";
 import { bass, kick, pad, rhodes } from "../instruments/synths.ts";
 import type { Kit } from "../instruments/vcsl.ts";
@@ -86,6 +86,90 @@ function renderDrums(kit: Kit, hits: Note[], length: number, rng: Rng): Stereo {
 }
 
 /**
+ * Interpolates between two frequencies on a log scale.
+ *
+ * @param from - Start frequency.
+ * @param to - End frequency.
+ * @param x - Position, 0..1 (clamped).
+ * @returns Frequency.
+ */
+function logLerp(from: number, to: number, x: number): number {
+	const k = Math.min(1, Math.max(0, x));
+
+	return from * (to / from) ** k;
+}
+
+/**
+ * Level automation in dB, from the song's sections: what a mix engineer rides by hand. The intro rises as it opens,
+ * breakdowns sit back, busy phrases lean in a little, the outro falls away.
+ *
+ * @param song - Composition.
+ * @returns Gain in dB at a time in seconds.
+ */
+export function levelCurve(song: Song): (t: number) => number {
+	const halfBar = 120 / song.bpm;
+
+	return function gainAt(t) {
+		for (const s of song.sections) {
+			if (t < s.startSec || (t >= s.endSec && s.kind !== "outro")) {
+				continue;
+			}
+
+			const x = (t - s.startSec) / (s.endSec - s.startSec);
+			const edge = Math.min(1, (t - s.startSec) / halfBar, (s.endSec - t) / halfBar);
+
+			switch (s.kind) {
+				case "intro":
+					return -7 + 7 * x ** 1.4;
+				case "breakdown":
+					return -4.5 * Math.max(0, edge);
+				case "outro":
+					return -9 * Math.min(1, (t - s.startSec) / (s.endSec - s.startSec + 2)) ** 1.3;
+				default:
+					return (s.energy - 0.6) * 4;
+			}
+		}
+
+		return -9;
+	};
+}
+
+/**
+ * The music bus filter automation, from the song's sections.
+ *
+ * @param song - Composition.
+ * @returns Cutoff in Hz at a time in seconds.
+ */
+export function filterCurve(song: Song): (t: number) => number {
+	const open = 20000;
+	const halfBar = 120 / song.bpm;
+
+	return function cutoffAt(t) {
+		for (const s of song.sections) {
+			if (t < s.startSec || (t >= s.endSec && s.kind !== "outro")) {
+				continue;
+			}
+
+			if (s.kind === "intro") {
+				return logLerp(650, open, ((t - s.startSec) / (s.endSec - s.startSec)) ** 1.6);
+			}
+
+			if (s.kind === "breakdown") {
+				return logLerp(open, 2200, Math.min((t - s.startSec) / halfBar, (s.endSec - t) / halfBar));
+			}
+
+			if (s.kind === "outro") {
+				return logLerp(open, 1400, (t - s.startSec) / (s.endSec - s.startSec + 2));
+			}
+
+			return open;
+		}
+
+		return open;
+	};
+}
+
+/**
  * Renders a lofi song to mastered stereo audio at 48 kHz.
  *
  * @param song - Composition.
@@ -96,7 +180,8 @@ function renderDrums(kit: Kit, hits: Note[], length: number, rng: Rng): Stereo {
 export function renderLofi(song: Song, kit: Kit, hooks: RenderHooks = {}): Stereo {
 	const { parts, bpm, seed } = song;
 	const rng = makeRng(`render:${seed}`);
-	const length = Math.ceil((song.seconds + 3) * SR);
+	// the final chord rings on past the last bar
+	const length = Math.ceil((song.seconds + 5) * SR);
 
 	const kickTimes = parts.drums
 		.filter(function isKick(n) {
@@ -192,19 +277,23 @@ export function renderLofi(song: Song, kit: Kit, hooks: RenderHooks = {}): Stere
 	biquad(wet, "lowpass", 6500, SR);
 	addInto(mix, wet, 0.9);
 
+	// the arrangement breathes through one filter: the intro opens up, breakdowns dip, the outro closes down
+	sweepLowpass(mix, SR, filterCurve(song));
+	automateGain(mix, SR, levelCurve(song));
+
 	// master: tape, tone, glue, vinyl, loudness
 	biquad(mix, "highpass", 30, SR);
 	tapeWobble(mix, SR, { wowHz: 0.42, wowMs: 1.3, flutterHz: 6.2, flutterMs: 0.08 });
 	biquad(mix, "lowshelf", 120, SR, { gainDb: 2 });
 	biquad(mix, "peak", 1000, SR, { gainDb: -2.5, q: 0.7 });
 	biquad(mix, "highshelf", 7000, SR, { gainDb: -1.5 });
-	compress(mix, SR, { thresholdDb: -20, ratio: 2.2, attackMs: 25, releaseMs: 300 });
+	compress(mix, SR, { thresholdDb: -14, ratio: 1.6, attackMs: 30, releaseMs: 300 });
 	saturate(mix, 1.25);
-	matchTone(mix, SR, LOFI_TONE, { strength: 0.75, maxDb: 7, passes: 3 });
+	matchTone(mix, SR);
 	vinyl(mix, SR, makeRng(`vinyl:${seed}`), { hissDb: -46, cracklesPerSec: 2.5 });
 	applyGain(mix, 10 ** ((-16 - gatedRmsDb(mix, SR)) / 20));
 	limit(mix, SR, { ceilingDb: -1.5 });
-	fade(mix, SR, 0.8, 4);
+	fade(mix, SR, 0.3, 3);
 
 	return mix;
 }

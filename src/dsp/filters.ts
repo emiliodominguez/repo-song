@@ -95,3 +95,39 @@ export function biquad(stereo: Stereo, type: FilterType, freq: number, sampleRat
 		}
 	}
 }
+
+/**
+ * A lowpass whose cutoff follows an automation curve (coefficients refreshed every 32 samples), for filter sweeps.
+ *
+ * @param buf - Buffer, modified in place.
+ * @param sampleRate - Sample rate in Hz.
+ * @param cutoffAt - Cutoff in Hz at a time in seconds.
+ * @param q - Resonance.
+ */
+export function sweepLowpass(buf: Stereo, sampleRate: number, cutoffAt: (t: number) => number, q = 0.8): void {
+	const block = 32;
+	const nyquistGuard = sampleRate * 0.45;
+
+	for (const ch of buf) {
+		let x1 = 0,
+			x2 = 0,
+			y1 = 0,
+			y2 = 0;
+
+		for (let s = 0; s < ch.length; s += block) {
+			const [b0, b1, b2, a1, a2] = biquadCoefs("lowpass", Math.min(nyquistGuard, cutoffAt(s / sampleRate)), sampleRate, { q });
+			const end = Math.min(ch.length, s + block);
+
+			for (let i = s; i < end; i++) {
+				const x = ch[i];
+				const y = b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
+
+				x2 = x1;
+				x1 = x;
+				y2 = y1;
+				y1 = y;
+				ch[i] = y;
+			}
+		}
+	}
+}

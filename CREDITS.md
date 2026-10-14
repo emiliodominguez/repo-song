@@ -10,11 +10,13 @@ Licences were checked before choosing sources: only CC0 or CC-BY material is use
 
 ## Reference tracks
 
-The tonal-balance target (`LOFI_TONE`) was measured from two CC-BY tracks. They are not redistributed; only their averaged octave-band energy is used.
+The tonal range (`LOFI_REFERENCE`) was measured from four tracks. They are not redistributed; only their octave-band balance is used.
 
 - "Lazy Daze" by Shane Ivers, <https://www.silvermansound.com>, CC BY 4.0.
 - "Trade Controls" by tcarisland, via OpenGameArt, CC BY 4.0.
+- "Diminishing Returns" by tcarisland, via OpenGameArt, CC BY 4.0.
+- "Chill lofi inspired" by omfgdude, via OpenGameArt, CC0.
 
 ## Code
 
-The composer and seeded RNG started in [music-radio](https://github.com/emiliodominguez/music-radio) by the same author.
+The seeded RNG and the first version of the composer started in [music-radio](https://github.com/emiliodominguez/music-radio) by the same author.

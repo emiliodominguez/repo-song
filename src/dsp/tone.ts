@@ -1,58 +1,103 @@
-// Tonal balance: octave-band analysis and a matching EQ that nudges a mix toward a reference curve.
+// Tonal balance: octave-band analysis and a matching EQ that keeps a mix inside the range real lofi records occupy.
 
 import type { Stereo } from "../types.ts";
-import { biquad } from "./filters.ts";
-import { fft } from "./reverb.ts";
+import { biquad, biquadCoefs } from "./filters.ts";
 
 /**
- * Octave-band balance (dB relative to total energy, 31 Hz..16 kHz) averaged from two CC-BY lofi masters:
- * "Lazy Daze" by Shane Ivers and "Trade Controls" by tcarisland. See docs/sound.md.
+ * Octave band centres, 31 Hz to 16 kHz.
  */
-export const LOFI_TONE = [-19.8, -4.3, -5.7, -11.1, -9.7, -14.4, -17.1, -22.8, -29.7, -40.9];
-
-const TONE_BANDS = [31, 63, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
+export const TONE_BANDS = [31, 63, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
 
 /**
- * Measures octave-band energy relative to the total.
+ * Octave-band balance of four lofi masters (whole tracks, measured with `toneBands`, dB relative to total energy):
+ * "Lazy Daze" (Shane Ivers, CC BY), "Trade Controls" and "Diminishing Returns" (tcarisland, CC BY),
+ * "Chill lofi inspired" (omfgdude, CC0). Regenerate with `pnpm reference-curve`; see docs/sound.md.
+ */
+export const LOFI_REFERENCE = {
+	min: [-14.8, -7.5, -6.9, -10.4, -13.7, -16.5, -22.5, -30.7, -37.8, -44.7],
+	mean: [-12.6, -6.3, -6.1, -8.0, -8.6, -12.3, -18.2, -23.7, -29.2, -35.3],
+	max: [-10.0, -4.8, -4.2, -5.2, -5.9, -8.3, -15.4, -19.7, -24.7, -31.1],
+};
+
+/**
+ * Measures octave-band energy relative to the total, splitting bands with a highpass/lowpass pair at f/√2 and f·√2.
+ * All bands are filtered in one pass over the signal.
  *
  * @param buf - Buffer (not modified).
  * @param sampleRate - Sample rate in Hz.
  * @returns Band levels in dB.
  */
 export function toneBands(buf: Stereo, sampleRate: number): number[] {
-	const energies = TONE_BANDS.map(function bandEnergy(f) {
-		const c: Stereo = [Float32Array.from(buf[0]), Float32Array.from(buf[1])];
+	const nb = TONE_BANDS.length;
 
-		biquad(c, "highpass", f / Math.SQRT2, sampleRate, { q: 0.9 });
-		biquad(c, "lowpass", f * Math.SQRT2, sampleRate, { q: 0.9 });
+	// per band: highpass b0 b1 b2 a1 a2, then lowpass b0 b1 b2 a1 a2
+	const k = new Float64Array(
+		TONE_BANDS.flatMap((f) => [
+			...biquadCoefs("highpass", f / Math.SQRT2, sampleRate, { q: 0.9 }),
+			...biquadCoefs("lowpass", f * Math.SQRT2, sampleRate, { q: 0.9 }),
+		]),
+	);
 
-		let e = 0;
+	const energies = new Float64Array(nb);
+	// per band: highpass x1 x2 y1 y2, then lowpass x1 x2 y1 y2
+	const state = new Float64Array(nb * 8);
 
-		for (const ch of c) {
-			for (let i = 0; i < ch.length; i++) {
-				e += ch[i] * ch[i];
+	for (const ch of buf) {
+		state.fill(0);
+
+		for (let i = 0; i < ch.length; i++) {
+			const x = ch[i];
+
+			for (let b = 0; b < nb; b++) {
+				const o = b * 8;
+				const c = b * 10;
+				const y = k[c] * x + k[c + 1] * state[o] + k[c + 2] * state[o + 1] - k[c + 3] * state[o + 2] - k[c + 4] * state[o + 3];
+
+				state[o + 1] = state[o];
+				state[o] = x;
+				state[o + 3] = state[o + 2];
+				state[o + 2] = y;
+
+				const z = k[c + 5] * y + k[c + 6] * state[o + 4] + k[c + 7] * state[o + 5] - k[c + 8] * state[o + 6] - k[c + 9] * state[o + 7];
+
+				state[o + 5] = state[o + 4];
+				state[o + 4] = y;
+				state[o + 7] = state[o + 6];
+				state[o + 6] = z;
+				energies[b] += z * z;
 			}
 		}
+	}
 
-		return e;
-	});
+	const total = energies.reduce((sum, e) => sum + e, 0);
 
-	const total = energies.reduce(function sum(s, e) {
-		return s + e;
-	}, 0);
+	return [...energies].map((e) => 10 * Math.log10(e / total + 1e-12));
+}
 
-	return energies.map(function toDb(e) {
-		return 10 * Math.log10(e / total + 1e-12);
-	});
+/**
+ * Where a band level should move to: nowhere if it already sits inside the reference range (shrunk toward the mean
+ * by `margin`), otherwise to the nearest edge of that range. Bands where the references disagree get left alone.
+ *
+ * @param value - Measured band level.
+ * @param i - Band index.
+ * @param margin - Fraction (0..1) of the range trimmed from each side.
+ * @returns Target level.
+ */
+export function bandTarget(value: number, i: number, margin = 0.25): number {
+	const { min, mean, max } = LOFI_REFERENCE;
+	const lo = min[i] + (mean[i] - min[i]) * margin;
+	const hi = max[i] - (max[i] - mean[i]) * margin;
+
+	return Math.min(hi, Math.max(lo, value));
 }
 
 export interface MatchToneOptions {
 	/**
-	 * Fraction of the band difference corrected per pass.
+	 * Fraction of the distance to the target corrected per pass.
 	 */
 	strength?: number;
 	/**
-	 * Largest boost or cut per band.
+	 * Largest boost or cut per band per pass.
 	 */
 	maxDb?: number;
 	/**
@@ -62,31 +107,32 @@ export interface MatchToneOptions {
 }
 
 /**
- * Matching EQ: nudges each octave band toward a target balance with shelves at the ends and peaks in between.
+ * Matching EQ: measures the mix and nudges only the bands outside the reference range back in, with shelves at the
+ * ends and octave-wide peaks in between.
  *
  * @param buf - Buffer, modified in place.
  * @param sampleRate - Sample rate in Hz.
- * @param target - Target band levels (dB relative to total).
- * @param opts - Fraction of the difference corrected per pass, gain clamp, number of passes.
- * @returns Gains applied on the last pass, per band.
+ * @param opts - Strength, clamp and passes.
+ * @returns Total gain applied per band across all passes.
  */
-export function matchTone(buf: Stereo, sampleRate: number, target: number[], opts: MatchToneOptions = {}): number[] {
-	const { strength = 0.6, maxDb = 6, passes = 2 } = opts;
-	let gains: number[] = [];
+export function matchTone(buf: Stereo, sampleRate: number, opts: MatchToneOptions = {}): number[] {
+	const { strength = 0.8, maxDb = 6, passes = 3 } = opts;
+
+	const applied = TONE_BANDS.map(function zero() {
+		return 0;
+	});
 
 	for (let p = 0; p < passes; p++) {
 		const now = toneBands(buf, sampleRate);
 
-		gains = now.map(function correction(v, i) {
-			return Math.max(-maxDb, Math.min(maxDb, (target[i] - v) * strength));
-		});
-
 		for (const [i, f] of TONE_BANDS.entries()) {
-			const gainDb = gains[i];
+			const gainDb = Math.max(-maxDb, Math.min(maxDb, (bandTarget(now[i], i) - now[i]) * strength));
 
 			if (Math.abs(gainDb) < 0.25) {
 				continue;
 			}
+
+			applied[i] += gainDb;
 
 			if (i === 0) {
 				biquad(buf, "lowshelf", f * 1.4, sampleRate, { gainDb });
@@ -98,51 +144,5 @@ export function matchTone(buf: Stereo, sampleRate: number, target: number[], opt
 		}
 	}
 
-	return gains;
-}
-
-/**
- * Octave-band balance by FFT (8192-point Hann, 50% overlap, mono), relative to total energy. This is the method the
- * reference curve was measured with; `toneBands` (biquad band split) reads differently, notably at 31 Hz.
- *
- * @param buf - Buffer (not modified).
- * @param sampleRate - Sample rate in Hz.
- * @returns Band levels in dB.
- */
-export function spectrumBands(buf: Stereo, sampleRate: number): number[] {
-	const n = 8192;
-	const acc = new Float64Array(n / 2 + 1);
-	const re = new Float64Array(n);
-	const im = new Float64Array(n);
-
-	for (let s = 0; s + n < buf[0].length; s += n / 2) {
-		for (let i = 0; i < n; i++) {
-			re[i] = ((buf[0][s + i] + buf[1][s + i]) / 2) * (0.5 - 0.5 * Math.cos((2 * Math.PI * i) / (n - 1)));
-			im[i] = 0;
-		}
-
-		fft(re, im, false);
-
-		for (let k = 0; k <= n / 2; k++) {
-			acc[k] += re[k] * re[k] + im[k] * im[k];
-		}
-	}
-
-	const total = acc.reduce(function sum(s, e) {
-		return s + e;
-	}, 0);
-
-	return TONE_BANDS.map(function band(f) {
-		let e = 0;
-
-		for (let k = 0; k <= n / 2; k++) {
-			const hz = (k * sampleRate) / n;
-
-			if (hz >= f / Math.SQRT2 && hz < f * Math.SQRT2) {
-				e += acc[k];
-			}
-		}
-
-		return 10 * Math.log10(e / total + 1e-12);
-	});
+	return applied;
 }

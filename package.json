@@ -37,7 +37,8 @@
 		"typecheck": "tsc --noEmit",
 		"test": "vitest run",
 		"assets:manifest": "node scripts/assets-manifest.ts",
-		"analyze": "node scripts/analyze.ts"
+		"analyze": "node scripts/analyze.ts",
+		"reference-curve": "node scripts/reference-curve.ts"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "21.2.3",

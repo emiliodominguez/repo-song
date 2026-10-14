@@ -13,6 +13,7 @@ import { readHistory } from "./history.ts";
 import { CATALOGS, detectLocale, format, plural } from "./i18n/index.ts";
 import { loadKit } from "./instruments/vcsl.ts";
 import { renderLofi, SAMPLE_RATE } from "./render/lofi.ts";
+import type { Song } from "./types.ts";
 
 const locale = detectLocale();
 const msg = CATALOGS[locale];
@@ -27,6 +28,71 @@ function status(text: string): void {
 }
 
 /**
+ * Formats seconds as m:ss.
+ *
+ * @param sec - Seconds.
+ * @returns Clock text.
+ */
+function clock(sec: number): string {
+	const s = Math.floor(sec);
+
+	return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+}
+
+/**
+ * The song's liner notes: each section, when it starts, and the stretch of history it plays.
+ *
+ * @param song - Composition.
+ * @returns Lines of text.
+ */
+function linerNotes(song: Song): string {
+	const span = (song.sections.at(-2)?.period?.to ?? 0) - (song.sections[1]?.period?.from ?? 0);
+
+	// date precision follows the history: days for a weekend project, months for a year, years for a decade
+	const dates = new Intl.DateTimeFormat(
+		locale,
+		span < 90 * 86400 ? { month: "short", day: "numeric" } : span < 4 * 365 * 86400 ? { month: "short", year: "numeric" } : { year: "numeric" },
+	);
+
+	const lines = [msg.notesTitle];
+
+	for (const s of song.sections) {
+		const facts: string[] = [];
+
+		if (s.period) {
+			const from = dates.format(s.period.from * 1000);
+			const to = dates.format(s.period.to * 1000);
+
+			facts.push(from === to ? from : format(msg.period, { from, to }));
+			facts.push(plural(locale, msg.commits, s.commits));
+		}
+
+		if (s.peak) {
+			facts.push(msg.peak);
+		}
+
+		if (s.kind === "breakdown") {
+			facts.push(msg.quiet);
+		}
+
+		if (s.newAuthors) {
+			facts.push(plural(locale, msg.newAuthors, s.newAuthors));
+		}
+
+		if (s.releases.length) {
+			const shown = s.releases.slice(0, 3);
+			const names = new Intl.ListFormat(locale, { type: "unit" }).format(s.releases.length > 3 ? [...shown, "…"] : shown);
+
+			facts.push(plural(locale, msg.releases, s.releases.length, { names }));
+		}
+
+		lines.push(`  ${clock(s.startSec).padStart(5)}  ${msg.section[s.kind].padEnd(10)} ${facts.join(" · ")}`.trimEnd());
+	}
+
+	return lines.join("\n");
+}
+
+/**
  * Runs the CLI.
  *
  * @param argv - Arguments after the executable and script.
@@ -37,7 +103,7 @@ async function main(argv: string[]): Promise<void> {
 		allowPositionals: true,
 		options: {
 			out: { type: "string", short: "o" },
-			seconds: { type: "string", short: "s", default: "45" },
+			seconds: { type: "string", short: "s", default: "90" },
 			seed: { type: "string" },
 			help: { type: "boolean", short: "h" },
 			version: { type: "boolean", short: "v" },
@@ -61,7 +127,7 @@ async function main(argv: string[]): Promise<void> {
 
 	const seconds = Number(values.seconds);
 
-	if (!Number.isFinite(seconds) || seconds < 15 || seconds > 300) {
+	if (!Number.isFinite(seconds) || seconds < 30 || seconds > 300) {
 		throw new RepoSongError("invalid_seconds", { value: values.seconds });
 	}
 
@@ -72,7 +138,7 @@ async function main(argv: string[]): Promise<void> {
 	const history = readHistory(dir);
 	const seed = values.seed ?? history.root;
 
-	status(format(msg.repo, { name: history.name, commits: plural(locale, msg.commits, history.commits), seed: seed.slice(0, 12) }));
+	status(format(msg.repo, { name: history.name, commits: plural(locale, msg.commits, history.commits.length), seed: seed.slice(0, 12) }));
 
 	const missing = missingAssets();
 
@@ -92,9 +158,10 @@ async function main(argv: string[]): Promise<void> {
 	});
 
 	const started = performance.now();
-	const song = composeLofi(seed, seconds);
+	const song = composeLofi({ ...history, root: seed }, seconds);
 
-	status(format(msg.composing, { key: song.key, scale: song.scale, bpm: song.bpm, seconds }));
+	status(format(msg.composing, { key: song.key, mode: msg.mode[song.mode], bpm: song.bpm, duration: clock(song.seconds) }));
+	process.stdout.write(`\n${linerNotes(song)}\n\n`);
 	status(msg.rendering);
 
 	const pcm = renderLofi(song, loadKit(assets));
