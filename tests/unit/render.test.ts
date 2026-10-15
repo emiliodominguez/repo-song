@@ -2,17 +2,14 @@ import { createHash } from "node:crypto";
 
 import { describe, expect, it } from "vitest";
 
-import { assetsDir, missingAssets } from "../../src/assets.ts";
+import { assetsDir } from "../../src/assets.ts";
 import { composeLofi } from "../../src/compose/lofi.ts";
 import { gatedRmsDb } from "../../src/dsp/dynamics.ts";
 import { loadKit } from "../../src/instruments/vcsl.ts";
 import { renderLofi, SAMPLE_RATE } from "../../src/render/lofi.ts";
 import { fixtureHistory } from "./fixtures.ts";
 
-const haveAssets = missingAssets().length === 0;
-
-// Needs the 255 MB of recordings (run `pnpm song` once, or point REPO_SONG_ASSETS at a copy). Skipped otherwise.
-describe.skipIf(!haveAssets)("renderLofi (sound regression)", () => {
+describe("renderLofi (sound regression)", () => {
 	const song = composeLofi(fixtureHistory(), 90);
 	const pcm = renderLofi(song, loadKit(assetsDir()));
 

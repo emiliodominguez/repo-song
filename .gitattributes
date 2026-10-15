@@ -1,1 +1,4 @@
 * text=auto eol=lf
+*.flac binary
+*.png binary
+*.wav binary

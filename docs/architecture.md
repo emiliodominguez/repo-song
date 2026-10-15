@@ -5,7 +5,7 @@ git history ──► story (form) ─┐
      │                         ├─► composer ──► notes per part + timed sections ──► renderer ──► mastered PCM ──► 24-bit WAV
      └► root commit (identity) ┘   harmony · groove · melody                       (render/lofi.ts)    (audio/wav.ts)
                                                                                          ▲
-                                                           recordings (assets.ts → instruments/vcsl.ts)
+                                                           instrument pack (assets/ → audio/flac.ts → instruments/vcsl.ts)
 ```
 
 ## Modules
@@ -20,17 +20,18 @@ git history ──► story (form) ─┐
 | `src/compose/melody.ts`  | Two-bar motifs, call-and-response phrases, chord-tone landings, clash avoidance, harmony notes.                                                                                                     |
 | `src/compose/lofi.ts`    | The composer: picks the identity from the root commit, lays out bars and chords, writes drums, Rhodes, pad, bass and piano.                                                                         |
 | `src/compose/rng.ts`     | Seeded RNG (FNV-1a + Mulberry32), identical to music-radio's.                                                                                                                                       |
-| `src/instruments/*`      | VCSL catalog and loader, the offline multisample player, the modelled Rhodes/bass/kick/pad.                                                                                                         |
+| `src/audio/*`            | FLAC decoder (verbatim, fixed, LPC, every stereo mode; bit-exact against the source WAVs), WAV reader and 24-bit writer.                                                                            |
+| `src/instruments/*`      | VCSL catalog and loader (zones decode on first use), the offline multisample player, the modelled Rhodes/bass/kick/pad.                                                                             |
 | `src/dsp/*`              | Filters (biquads, automated lowpass), dynamics, character (saturation, tape, vinyl, crunch, tremolo), FFT convolution and room IR, tone analysis and matching EQ, buffer helpers (gain automation). |
 | `src/render/lofi.ts`     | Renders each part, levels and sums them, adds the shared room, automates filter and level by section, masters.                                                                                      |
-| `src/assets.ts`          | Cache location, manifest check, resumable parallel download from the pinned VCSL commit.                                                                                                            |
+| `src/assets.ts`          | Where the instrument pack is: `assets/` next to `src/` or `dist/`, or `REPO_SONG_ASSETS`.                                                                                                           |
 
 ## The determinism contract
 
 1. **Identity is fixed by the root commit.** Key, mode, tempo, swing, progressions and themes depend only on it, so a repo keeps its song as it grows.
 2. **Form follows the history.** New commits shift the slices, so a song evolves with its repo: same tune, a different story. The tests check that adding a commit keeps key, mode and tempo.
 3. **Each concern has its own seeded stream** (`identity:`, `harmony:`, `groove:`, `comp:`, `bass:`, `melody:`, `render:`, `room:`, `vinyl:` + seed). Changing how the bass is written doesn't reshuffle the drums.
-4. **The recordings are pinned** to one VCSL commit.
+4. **The recordings are pinned** to one VCSL commit and shipped losslessly in `assets/`; `scripts/assets-pack.ts` rebuilds the pack and refuses any file that does not decode to its source.
 
 Two golden hashes guard the sound: `tests/unit/compose.test.ts` (the composed song for a fixture history) and `tests/unit/render.test.ts` (the rendered PCM). Change them only on purpose, after listening. `Math.sin`/`exp`/`tanh` are deterministic within a V8 version, so a Node upgrade can legitimately move the render hash.
 

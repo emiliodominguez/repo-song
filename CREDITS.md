@@ -4,7 +4,7 @@
 
 **Versilian Community Sample Library (VCSL)** by Versilian Studios LLC, released under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). <https://github.com/sgossner/VCSL>
 
-Used: Upright Piano (Yamaha), Snare Drum (Modern 1), Hi-Hat Cymbal, Shaker (Small). They are downloaded at first run from the pinned commit listed in `src/assets-manifest.json`; they are not part of the npm package. CC0 requires no attribution; this credit is given gladly.
+Used: Upright Piano (Yamaha), Snare Drum (Modern 1), Hi-Hat Cymbal, Shaker (Small). They ship in `assets/` as lossless FLAC (piano sustains shortened), built by `scripts/assets-pack.ts` from the pinned commit listed in `scripts/vcsl-manifest.json`. CC0 requires no attribution; this credit is given gladly.
 
 Licences were checked before choosing sources: only CC0 or CC-BY material is used, so the songs people make are theirs without restrictions. Non-commercial (NC) and share-alike (SA) libraries were excluded.
 

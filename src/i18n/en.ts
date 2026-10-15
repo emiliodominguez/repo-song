@@ -16,8 +16,6 @@ export const en = {
 	reading: "Reading {path}",
 	repo: "{name} · {commits} · seed {seed}",
 	commits: { one: "{count} commit", other: "{count} commits" },
-	downloading: "First run: downloading instrument recordings ({size} MB, cached for next time)",
-	progress: "  {percent}%",
 	composing: "Composing in {key} {mode}, {bpm} BPM, {duration}",
 	mode: { major: "major", minor: "minor" },
 	notesTitle: "Liner notes",
@@ -32,8 +30,7 @@ export const en = {
 	errors: {
 		not_a_repo: "{path} is not inside a git repository.",
 		no_commits: "{path} has no commits yet, so there is no history to play.",
-		assets_download_failed: "Could not download {path} ({status}). Check your connection and try again.",
-		assets_missing: "Instrument recordings are missing at {path}. Delete the folder and run again to re-download.",
+		assets_missing: "Instrument recordings are missing at {path}. Reinstall repo-song, or point REPO_SONG_ASSETS at a copy of its assets folder.",
 		invalid_seconds: "--seconds must be a number from 30 to 300 (got {value}).",
 		write_failed: "Could not write {file}: {reason}",
 		unexpected: "Something went wrong: {reason}",

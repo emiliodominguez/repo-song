@@ -1,10 +1,12 @@
-// Builds sampler instruments from the cached VCSL recordings.
+// Builds sampler instruments from the instrument pack (VCSL recordings as FLAC, see scripts/assets-pack.ts).
 
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
 
+import { readFlac } from "../audio/flac.ts";
 import { readWav } from "../audio/wav.ts";
 import { RepoSongError } from "../errors.ts";
+import type { Stereo } from "../types.ts";
 import { SAMPLED, type SampledName } from "./catalog.ts";
 import type { Instrument, Zone } from "./sampler.ts";
 
@@ -27,16 +29,26 @@ export function vcslNote(name: string): number {
 }
 
 /**
+ * Reads a recording, FLAC or WAV by extension.
+ *
+ * @param path - File path.
+ * @returns Sample rate and stereo data.
+ */
+function readAudio(path: string): { sampleRate: number; data: Stereo } {
+	return path.endsWith(".flac") ? readFlac(path) : readWav(path);
+}
+
+/**
  * Loads every zone of one catalog entry. Drum hits without a note name sit at MIDI 60.
  *
- * @param assets - Assets directory.
+ * @param assets - Pack directory.
  * @param name - Catalog entry.
  * @param fixedLayer - Force every zone into this layer (single-layer instruments).
  * @returns Zones in file-name order.
  */
 function loadZones(assets: string, name: SampledName, fixedLayer?: number): Zone[] {
-	const { dir, pattern } = SAMPLED[name];
-	const full = join(assets, dir);
+	const { pattern } = SAMPLED[name];
+	const full = join(assets, name);
 	let files: string[];
 
 	try {
@@ -54,14 +66,30 @@ function loadZones(assets: string, name: SampledName, fixedLayer?: number): Zone
 			continue;
 		}
 
-		const { sampleRate, data } = readWav(join(full, file));
+		const path = join(full, file);
+		let audio: ReturnType<typeof readAudio> | undefined;
+
+		/**
+		 * Decodes the recording the first time the sampler plays it; most songs touch only part of the keyboard.
+		 *
+		 * @returns Sample rate and data.
+		 */
+		function load(): ReturnType<typeof readAudio> {
+			audio ??= readAudio(path);
+
+			return audio;
+		}
 
 		zones.push({
 			root: g["note"] ? vcslNote(g["note"]) : 60,
 			layer: fixedLayer ?? Number(g["layer"]),
 			rr: Number(g["rr"] ?? 1),
-			sampleRate,
-			data,
+			get sampleRate() {
+				return load().sampleRate;
+			},
+			get data() {
+				return load().data;
+			},
 		});
 	}
 
@@ -103,9 +131,9 @@ export interface Kit {
 }
 
 /**
- * Loads the full kit from the assets directory.
+ * Loads the full kit from the pack.
  *
- * @param assets - Assets directory.
+ * @param assets - Pack directory.
  * @returns Instruments.
  */
 export function loadKit(assets: string): Kit {

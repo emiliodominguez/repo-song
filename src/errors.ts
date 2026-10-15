@@ -1,6 +1,6 @@
 // Errors carry a code and params; the CLI turns them into localised text (see src/i18n).
 
-export const ERROR_CODES = ["not_a_repo", "no_commits", "assets_download_failed", "assets_missing", "invalid_seconds", "write_failed"] as const;
+export const ERROR_CODES = ["not_a_repo", "no_commits", "assets_missing", "invalid_seconds", "write_failed"] as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

@@ -1,4 +1,5 @@
-// Regenerates src/assets-manifest.json: every VCSL file the catalog uses, with its size, at the pinned commit.
+// Regenerates scripts/vcsl-manifest.json: every VCSL file the catalog uses, with its size, at the pinned commit. It is
+// the source list for scripts/assets-pack.ts.
 //   pnpm assets:manifest            (set GITHUB_TOKEN to avoid the anonymous API rate limit)
 
 import { writeFileSync } from "node:fs";
@@ -66,5 +67,5 @@ const files = tree
 		return a.path.localeCompare(b.path);
 	});
 
-writeFileSync(new URL("../src/assets-manifest.json", import.meta.url), `${JSON.stringify({ source: VCSL, files }, null, "\t")}\n`);
+writeFileSync(new URL("vcsl-manifest.json", import.meta.url), `${JSON.stringify({ source: VCSL, files }, null, "\t")}\n`);
 process.stderr.write(`${files.length} files, ${(files.reduce((s, f) => s + f.size, 0) / 1e6).toFixed(1)} MB\n`);

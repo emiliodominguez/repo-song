@@ -5,13 +5,11 @@ import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { ASSET_FILES } from "../../src/assets.ts";
 import { encodeWav24, readWav } from "../../src/audio/wav.ts";
 import { stereo } from "../../src/dsp/buffers.ts";
 import { ERROR_CODES, RepoSongError } from "../../src/errors.ts";
 import { readHistory } from "../../src/history.ts";
 import { CATALOGS, detectLocale, format, plural } from "../../src/i18n/index.ts";
-import { SAMPLED } from "../../src/instruments/catalog.ts";
 
 describe("wav", () => {
 	it("round-trips 24-bit audio within dither noise", () => {
@@ -57,7 +55,7 @@ describe("i18n", () => {
 			return [...s.matchAll(/\{(\w+)\}/gu)].map((m) => m[1] ?? "").sort();
 		}
 
-		for (const key of ["help", "reading", "repo", "downloading", "progress", "composing", "rendering", "wrote"] as const) {
+		for (const key of ["help", "reading", "repo", "composing", "rendering", "wrote"] as const) {
 			expect(holes(CATALOGS.es[key]), key).toEqual(holes(CATALOGS.en[key]));
 		}
 
@@ -108,17 +106,5 @@ describe("history", () => {
 		const empty = mkdtempSync(join(tmpdir(), "repo-song-none-"));
 
 		expect(() => readHistory(empty)).toThrow(RepoSongError);
-	});
-});
-
-describe("assets manifest", () => {
-	it("covers every sampled instrument", () => {
-		for (const [name, { dir, pattern }] of Object.entries(SAMPLED)) {
-			const hits = ASSET_FILES.filter(function inDir(f) {
-				return f.path.startsWith(`${dir}/`) && pattern.test(f.path.slice(dir.length + 1));
-			});
-
-			expect(hits.length, name).toBeGreaterThan(0);
-		}
 	});
 });

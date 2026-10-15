@@ -16,8 +16,6 @@ export const es: Messages = {
 	reading: "Leyendo {path}",
 	repo: "{name} · {commits} · semilla {seed}",
 	commits: { one: "{count} commit", other: "{count} commits" },
-	downloading: "Primera ejecución: descargando grabaciones de instrumentos ({size} MB, quedan guardadas para la próxima)",
-	progress: "  {percent}%",
 	composing: "Componiendo en {key} {mode}, {bpm} BPM, {duration}",
 	mode: { major: "mayor", minor: "menor" },
 	notesTitle: "Notas del disco",
@@ -32,8 +30,8 @@ export const es: Messages = {
 	errors: {
 		not_a_repo: "{path} no está dentro de un repositorio git.",
 		no_commits: "{path} todavía no tiene commits, así que no hay historial para tocar.",
-		assets_download_failed: "No se pudo descargar {path} ({status}). Revisá tu conexión y probá de nuevo.",
-		assets_missing: "Faltan las grabaciones de instrumentos en {path}. Borrá la carpeta y volvé a ejecutar para descargarlas.",
+		assets_missing:
+			"Faltan las grabaciones de instrumentos en {path}. Reinstalá repo-song, o apuntá REPO_SONG_ASSETS a una copia de su carpeta assets.",
 		invalid_seconds: "--seconds debe ser un número entre 30 y 300 (recibido: {value}).",
 		write_failed: "No se pudo escribir {file}: {reason}",
 		unexpected: "Algo salió mal: {reason}",

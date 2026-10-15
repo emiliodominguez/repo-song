@@ -5,7 +5,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { parseArgs } from "node:util";
 
-import { assetsBytes, ensureAssets, missingAssets } from "./assets.ts";
+import { assetsDir } from "./assets.ts";
 import { encodeWav24 } from "./audio/wav.ts";
 import { composeLofi } from "./compose/lofi.ts";
 import { RepoSongError } from "./errors.ts";
@@ -140,23 +140,6 @@ async function main(argv: string[]): Promise<void> {
 
 	status(format(msg.repo, { name: history.name, commits: plural(locale, msg.commits, history.commits.length), seed: seed.slice(0, 12) }));
 
-	const missing = missingAssets();
-
-	if (missing.length) {
-		status(format(msg.downloading, { size: Math.max(1, Math.round(assetsBytes(missing) / 1e6)) }));
-	}
-
-	let lastPercent = -1;
-
-	const assets = await ensureAssets(function progress(done, total) {
-		const percent = Math.floor((done / total) * 10) * 10;
-
-		if (percent !== lastPercent) {
-			lastPercent = percent;
-			status(format(msg.progress, { percent }));
-		}
-	});
-
 	const started = performance.now();
 	const song = composeLofi({ ...history, root: seed }, seconds);
 
@@ -164,7 +147,7 @@ async function main(argv: string[]): Promise<void> {
 	process.stdout.write(`\n${linerNotes(song)}\n\n`);
 	status(msg.rendering);
 
-	const pcm = renderLofi(song, loadKit(assets));
+	const pcm = renderLofi(song, loadKit(assetsDir()));
 	const file = resolve(values.out ?? `${history.name}.wav`);
 
 	try {
