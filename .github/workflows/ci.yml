@@ -1,0 +1,56 @@
+name: CI
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+
+permissions:
+    contents: read
+
+jobs:
+    check:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
+            - uses: pnpm/action-setup@v4
+            - uses: actions/setup-node@v5
+              with:
+                  node-version-file: .node-version
+                  cache: pnpm
+            - run: pnpm install --frozen-lockfile
+            - run: pnpm check
+
+    # The published artifact on every supported Node and OS: pack, install the tarball in an empty project, render this
+    # repo's song. The golden render hash is pinned for the development Node only (V8 math may differ by a bit elsewhere).
+    package:
+        needs: check
+        runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, macos-latest, windows-latest]
+                node: [22, 24, 26]
+        steps:
+            - uses: actions/checkout@v5
+              with:
+                  fetch-depth: 0
+            - uses: pnpm/action-setup@v4
+            - uses: actions/setup-node@v5
+              with:
+                  node-version-file: .node-version
+                  cache: pnpm
+            - run: pnpm install --frozen-lockfile
+            - run: pnpm build
+            - run: pnpm pack --pack-destination "${{ runner.temp }}/pkg"
+            - uses: actions/setup-node@v5
+              with:
+                  node-version: ${{ matrix.node }}
+            - name: Install the tarball and render a song
+              shell: bash
+              working-directory: ${{ runner.temp }}
+              run: |
+                  mkdir try && cd try && npm init -y > /dev/null
+                  npm install --no-audit --no-fund ../pkg/repo-song-*.tgz
+                  npx repo-song "$GITHUB_WORKSPACE" -s 30 -o song.wav
+                  test "$(wc -c < song.wav)" -gt 1000000

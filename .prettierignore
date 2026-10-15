@@ -2,4 +2,4 @@ dist/
 .cache/
 .plans/
 pnpm-lock.yaml
-src/assets-manifest.json
+scripts/vcsl-manifest.json

@@ -1,12 +1,14 @@
 # repo-song
 
+![repo-song — lofi beats to git blame to. A relaxed raccoon makes music from a messy git history in a cozy recording studio.](docs/assets/repo-song-banner.png)
+
 **Every git repo has a song.** `repo-song` reads a repository's history and turns it into a lofi track played on real sampled instruments: an upright piano, a Rhodes, bass, a dusty boom-bap kit, tape and vinyl. The busy stretches play fuller, the quiet ones break down, releases land home, and new contributors join the band.
 
 ```bash
 npx repo-song            # in any git repo → <repo>.wav, plus its liner notes
 ```
 
-> Status: pre-release (0.1.0). Not on npm yet; run it from source (below).
+Works offline: the instruments ship inside the package (about 29 MB), and nothing about your repo leaves your machine.
 
 ```
 $ repo-song ~/src/react
@@ -34,19 +36,20 @@ Liner notes
 
 - About 90 seconds (configurable) of 24-bit / 48 kHz stereo WAV, mastered to streaming loudness (about −14 LUFS, true peaks at −1.5 dBFS), with real dynamics (7–10 dB between the quietest and busiest moments, like the reference records).
 - Liner notes on stdout: each section, when it starts, and the stretch of history it plays.
-- No native dependencies. Composition, synthesis, sampling, reverb and mastering are plain TypeScript; a 90 s song renders in about 9 s on an M-series Mac, even for a repo with 20 000 commits.
+- No native dependencies and no runtime npm dependencies. Composition, synthesis, sampling, reverb and mastering are plain TypeScript; a 90 s song renders in about 10 s on an M-series Mac, even for a repo with 20 000 commits.
 
-## Run from source
+## Usage
 
-Requires Node 22.18+ (Node 26.5 for development, see `.node-version`) and pnpm.
+Requires Node 22.18 or newer and `git` on the `PATH`.
 
 ```bash
-pnpm install
-pnpm song ~/path/to/some/repo           # writes some-repo.wav in the current directory
-pnpm song . -o my-song.wav -s 150       # about two and a half minutes
+npx repo-song                          # the repo you are in → <repo>.wav
+npx repo-song ~/src/some-project       # any other repo
+npx repo-song . -o my-song.wav -s 150  # about two and a half minutes
+npm install -g repo-song               # keep it around: repo-song …
 ```
 
-The first run downloads the instrument recordings (about 255 MB, CC0) into your cache directory (`~/Library/Caches/repo-song` on macOS, `$XDG_CACHE_HOME/repo-song` or `~/.cache/repo-song` on Linux, `%LOCALAPPDATA%\repo-song` on Windows). Set `REPO_SONG_ASSETS` to use another folder. Bare clones work too, so `git clone --bare --filter=tree:0 <url>` is enough to hear any public project.
+Bare clones work too, so `git clone --bare --filter=tree:0 <url>` is enough to hear any public project without checking it out.
 
 ### Options
 
@@ -71,14 +74,19 @@ Details, numbers and how the mix was tuned: [docs/sound.md](docs/sound.md). Code
 
 ## Development
 
+Node 26.5 (see `.node-version`) and pnpm. The source runs directly, no build step.
+
 ```bash
-pnpm check                  # format, lint (oxlint, type-aware), typecheck, tests, build
-pnpm analyze repo-a repo-b  # render and print tonal balance, loudness, dynamics, part levels
-pnpm reference-curve        # re-measure the reference records (needs ffmpeg)
+pnpm install
+pnpm song ~/path/to/some/repo  # the CLI from source
+pnpm check                     # format, lint (oxlint, type-aware), typecheck, tests, build
+pnpm analyze repo-a repo-b     # render and print tonal balance, loudness, dynamics, part levels
+pnpm reference-curve           # re-measure the reference records (needs ffmpeg)
+pnpm assets:pack               # rebuild assets/ from the pinned VCSL commit (needs ffmpeg)
 ```
 
-The sound regression test (`tests/unit/render.test.ts`) needs the recordings and is skipped without them.
+`assets/` is the instrument pack: the VCSL recordings the sampler uses, as lossless FLAC, piano sustains cut to the longest stretch a note can read. `pnpm assets:pack` decodes every file back and checks it against its source sample for sample, and the sound regression test (`tests/unit/render.test.ts`) pins the rendered PCM, so the pack plays exactly like the original 255 MB of WAV. Releases are published from CI; see [docs/releasing.md](docs/releasing.md).
 
 ## Credits and license
 
-Code: MIT. Instrument recordings: CC0, by Versilian Studios; see [CREDITS.md](CREDITS.md). The seeded RNG and the first composer came from [music-radio](https://github.com/emiliodominguez/music-radio).
+Code: MIT. Instrument recordings: CC0, by Versilian Studios, redistributed in `assets/`; see [CREDITS.md](CREDITS.md). The seeded RNG and the first composer came from [music-radio](https://github.com/emiliodominguez/music-radio).

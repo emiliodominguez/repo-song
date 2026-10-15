@@ -6,20 +6,33 @@
 		"git",
 		"music",
 		"lofi",
-		"generative",
+		"song",
+		"generative-music",
+		"sonification",
 		"cli",
-		"sonification"
+		"npx",
+		"git-history",
+		"audio"
 	],
 	"license": "MIT",
 	"author": "Emilio Dominguez <emilioadominguezb@gmail.com>",
+	"homepage": "https://github.com/emiliodominguez/repo-song#readme",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/emiliodominguez/repo-song.git"
+	},
+	"bugs": {
+		"url": "https://github.com/emiliodominguez/repo-song/issues"
+	},
 	"type": "module",
 	"bin": {
 		"repo-song": "./dist/cli.js"
 	},
 	"files": [
 		"dist",
-		"CREDITS.md",
-		"LICENSE"
+		"assets",
+		"CHANGELOG.md",
+		"CREDITS.md"
 	],
 	"packageManager": "pnpm@12.8.1",
 	"engines": {
@@ -38,7 +51,9 @@
 		"test": "vitest run",
 		"assets:manifest": "node scripts/assets-manifest.ts",
 		"analyze": "node scripts/analyze.ts",
-		"reference-curve": "node scripts/reference-curve.ts"
+		"reference-curve": "node scripts/reference-curve.ts",
+		"assets:pack": "node scripts/assets-pack.ts",
+		"prepublishOnly": "pnpm check"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "21.2.3",
@@ -54,5 +69,8 @@
 		"prettier": "3.9.8",
 		"typescript": "6.0.3",
 		"vitest": "5.0.1"
+	},
+	"publishConfig": {
+		"access": "public"
 	}
 }
